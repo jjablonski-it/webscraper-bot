@@ -40,5 +40,7 @@ const main = async () => {
 }
 
 setInterval(main, process.env.SCRAPE_INTERVAL || 1000 * 60)
+dcClient.sendMessage('Bot started')
+
 console.log(`Scraping every ${process.env.SCRAPE_INTERVAL / 1000} seconds`)
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}`))
