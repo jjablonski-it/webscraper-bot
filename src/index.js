@@ -5,6 +5,10 @@ import { config } from 'dotenv'
 config()
 
 const SCRAPE_URL = ''
-const GENERAL_CHANELL = '1004810730761093152'
+const scraper = new Scraper(SCRAPE_URL)
 
-const dc = new Discord(process.env.CLIENT_TOKEN)
+const dcClient = new Discord({
+  token: process.env.CLIENT_TOKEN,
+  channelId: '1004810730761093152',
+})
+await dcClient.login()
