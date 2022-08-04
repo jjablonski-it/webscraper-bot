@@ -2,7 +2,16 @@ import { Discord } from './discord.js'
 import { Scraper } from './scraper.js'
 import { config } from 'dotenv'
 import { addApartments, getExistingLinks } from './db.js'
+import http from 'http'
 config()
+
+const PORT = process.env.PORT || 3000
+
+// server create
+const server = http.createServer((req, res) => {
+  res.write('OK').end()
+})
+
 
 const scraper = new Scraper(process.env.SCRAPE_URL)
 
@@ -33,3 +42,4 @@ const main = async () => {
 
 setInterval(main, process.env.SCRAPE_INTERVAL || 1000 * 60)
 console.log(`Scraping every ${process.env.SCRAPE_INTERVAL / 1000} seconds`)
+server.listen(PORT, () => console.log(`Server listening on port ${PORT}`))
