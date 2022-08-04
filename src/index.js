@@ -1,14 +1,14 @@
 import { config } from 'dotenv'
 import { Client, GatewayIntentBits } from 'discord.js'
-
 config()
+
 const client = new Client({ intents: GatewayIntentBits.Guilds })
 
-client.on('ready', () => {
+client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`)
-  console.log(
-    client.channels.cache.at('1004810730761093152')?.send('Hello World!')
-  )
+
+  const channel = client.channels.cache.get('1004810730761093152')
+  channel.send('Hello, world!')
 })
 
 client.on('interactionCreate', async (interaction) => {
