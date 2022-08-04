@@ -30,3 +30,6 @@ const main = async () => {
 }
 
 setInterval(main, process.env.SCRAPE_INTERVAL || 1000 * 60)
+console.log(
+  `Scraping every ${process.env.SCRAPE_INTERVAL / 1000} seconds`
+)
