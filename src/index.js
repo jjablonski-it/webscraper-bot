@@ -1,24 +1,32 @@
 import { Discord } from './discord.js'
 import { Scraper } from './scraper.js'
-
 import { config } from 'dotenv'
+import { addApartments, getExistingLinks } from './db.js'
 config()
 
-const URL =
-  'https://www.olx.pl/d/nieruchomosci/mieszkania/wynajem/gdansk/q-mieszkanie/?search%5Bfilter_float_price%3Afrom%5D=1000&search%5Bfilter_float_price%3Ato%5D=3300&search%5Bfilter_enum_furniture%5D%5B0%5D=yes&search%5Bfilter_float_m%3Afrom%5D=25&search%5Bfilter_enum_rooms%5D%5B0%5D=two&reason=observed_search'
-const scraper = new Scraper(URL)
-const dom = await scraper.getDom()
-const x = dom.window.document.querySelectorAll('[data-cy=l-card]')
-console.log(x)
-// const dcClient = new Discord({
-//   token: process.env.CLIENT_TOKEN,
-//   channelId: '1004810730761093152',
-// })
-// await dcClient.login()
+const scraper = new Scraper(process.env.SCRAPE_URL)
 
-const cards = await scraper.getCards()
-const json = JSON.stringify(cards)
+const dcClient = new Discord({
+  token: process.env.CLIENT_TOKEN,
+  channelId: '1004810730761093152',
+})
+await dcClient.login()
 
-console.log(json);
+const main = async () => {
+  const scrapedLinks = await scraper.getLinks()
+  const currentLinks = await getExistingLinks()
 
-// console.log(JSON.stringify(cards[0].asElement()))
+  const newLinks = scrapedLinks.filter((link) => !currentLinks.includes(link))
+  await addApartments(newLinks)
+
+  const message = `${newLinks.length} new apartments: \n ${newLinks.join(', ')}`
+
+  if (newLinks.length) {
+    dcClient.sendMessage(message.substring(0, 2000))
+    console.log(message)
+  } else {
+    console.log('No new apartments')
+  }
+}
+
+setInterval(main, process.env.SCRAPE_INTERVAL || 1000 * 60)

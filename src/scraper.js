@@ -13,7 +13,7 @@ export class Scraper {
     return dom
   }
 
-  async getCards(url) {
+  async getLinks(url) {
     const cardSlector = '[data-cy=l-card]'
     const browser = await puppeteer.launch({
       headless: true,
@@ -26,6 +26,6 @@ export class Scraper {
     const res = await Promise.all(links.map((handle) => handle.getProperty('href')))
     const hrefs = await Promise.all(res.map((href) => href.jsonValue()))
     await page.close()
-    return 
+    return hrefs
   }
 }

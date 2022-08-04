@@ -13,13 +13,13 @@ export class Discord {
   }
 
   async login() {
-    console.log('Logging in with token:', this.token)
+    // console.log('Logging in with token:', this.token)
     await this.client.login(this.token)
   }
 
   async sendMessage(message) {
     const channel = this.client.channels.cache.get(this.channelId)
-    console.log('channel:', channel)
+    // console.log('channel:', channel)
     await channel?.send(message)
   }
 }
