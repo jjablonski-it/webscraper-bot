@@ -12,7 +12,6 @@ const server = http.createServer((req, res) => {
   res.write('OK').end()
 })
 
-
 const scraper = new Scraper(process.env.SCRAPE_URL)
 
 const dcClient = new Discord({
