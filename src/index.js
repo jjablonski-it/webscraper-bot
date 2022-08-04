@@ -19,7 +19,9 @@ const main = async () => {
   const newLinks = scrapedLinks.filter((link) => !currentLinks.includes(link))
   await addApartments(newLinks)
 
-  const message = `${newLinks.length} new apartments: \n ${newLinks.join(', ')}`
+  const message = `${newLinks.length} new apartment${
+    newLinks.length > 1 ? 's' : ''
+  }: \n ${newLinks.join(', ')}`
 
   if (newLinks.length) {
     dcClient.sendMessage(message.substring(0, 2000))
@@ -30,6 +32,4 @@ const main = async () => {
 }
 
 setInterval(main, process.env.SCRAPE_INTERVAL || 1000 * 60)
-console.log(
-  `Scraping every ${process.env.SCRAPE_INTERVAL / 1000} seconds`
-)
+console.log(`Scraping every ${process.env.SCRAPE_INTERVAL / 1000} seconds`)
