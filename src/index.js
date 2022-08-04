@@ -21,21 +21,25 @@ const dcClient = new Discord({
 await dcClient.login()
 
 const main = async () => {
-  const scrapedLinks = await scraper.getLinks()
-  const currentLinks = await getExistingLinks()
+  try {
+    const scrapedLinks = await scraper.getLinks()
+    const currentLinks = await getExistingLinks()
 
-  const newLinks = scrapedLinks.filter((link) => !currentLinks.includes(link))
-  await addApartments(newLinks)
+    const newLinks = scrapedLinks.filter((link) => !currentLinks.includes(link))
+    await addApartments(newLinks)
 
-  const message = `${newLinks.length} new apartment${
-    newLinks.length > 1 ? 's' : ''
-  }: \n ${newLinks.join(', ')}`
+    const message = `${newLinks.length} new apartment${
+      newLinks.length > 1 ? 's' : ''
+    }: \n ${newLinks.join(', ')}`
 
-  if (newLinks.length) {
-    dcClient.sendMessage(message.substring(0, 2000))
-    console.log(message)
-  } else {
-    console.log('No new apartments')
+    if (newLinks.length) {
+      dcClient.sendMessage(message.substring(0, 2000))
+      console.log(message)
+    } else {
+      console.log('No new apartments')
+    }
+  } catch (e) {
+    console.error('Something went wrong:', e)
   }
 }
 
