@@ -43,6 +43,7 @@ const main = async () => {
   }
 }
 
+main()
 setInterval(main, process.env.SCRAPE_INTERVAL || 1000 * 60)
 dcClient.sendMessage('Bot started')
 
