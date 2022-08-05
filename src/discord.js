@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits } from 'discord.js'
-import {getExistingLinks} from './db.js'
+import { getExistingLinks } from './db.js'
 
 export class Discord {
   constructor({ token, channelId, onReady }) {
@@ -25,6 +25,12 @@ export class Discord {
       if (interaction.commandName === 'ping') {
         const apartments = await getExistingLinks()
         await interaction.reply(`Pong! ${apartments.length} apartments found so far`)
+      }
+
+      if (interaction.commandName === 'last') {
+        const count = interaction.options.count || 10
+        const apartments = await getExistingLinks()
+        await interaction.reply(apartments.slice(count).join('\n'))
       }
     })
   }
