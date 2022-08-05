@@ -1,5 +1,5 @@
 import { config } from 'dotenv'
-import { REST, Routes } from 'discord.js'
+import { REST, Routes, SlashCommandBuilder } from 'discord.js'
 
 config()
 const commands = [
@@ -7,7 +7,12 @@ const commands = [
     name: 'ping',
     description: 'Replies with Pong!',
   },
+  {
+    name: 'last',
+    description: 'Returns last 10 apartments',
+  },
 ]
+
 
 console.log('CLIENT_TOKEN:', process.env.CLIENT_TOKEN)
 const rest = new REST({ version: '10' }).setToken(process.env.CLIENT_TOKEN)
