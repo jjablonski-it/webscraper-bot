@@ -7,12 +7,19 @@ const commands = [
     name: 'ping',
     description: 'Replies with Pong!',
   },
-  {
-    name: 'last',
-    description: 'Returns last 10 apartments',
-  },
+  new SlashCommandBuilder()
+    .setName('last')
+    .setDescription("Shows the last x apartments' links")
+    .addIntegerOption((option) =>
+      option
+        .setName('count')
+        .setDescription('Number of apartments to show')
+        .setMinValue(1)
+        .setMaxValue(25)
+        .setRequired(true)
+    )
+    .toJSON(),
 ]
-
 
 console.log('CLIENT_TOKEN:', process.env.CLIENT_TOKEN)
 const rest = new REST({ version: '10' }).setToken(process.env.CLIENT_TOKEN)
