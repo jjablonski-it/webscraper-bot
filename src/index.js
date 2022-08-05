@@ -32,7 +32,7 @@ const main = async () => {
 
     const message = `${newLinks.length} new apartment${
       newLinks.length > 1 ? 's' : ''
-    }: \n ${newLinks.join(', ')}`
+    }: \n ${newLinks.join('\n')}`
 
     if (newLinks.length) {
       dcClient.sendMessage(message.substring(0, 2000))
