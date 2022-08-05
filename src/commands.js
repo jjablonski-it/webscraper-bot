@@ -16,7 +16,7 @@ const commands = [
         .setDescription('Number of apartments to show')
         .setMinValue(1)
         .setMaxValue(25)
-        .setRequired(true)
+        .setRequired(false)
     )
     .toJSON(),
 ]

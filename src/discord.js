@@ -28,7 +28,7 @@ export class Discord {
       }
 
       if (interaction.commandName === 'last') {
-        const count = interaction.options.getInteger("count") || 10
+        const count = interaction.options.getInteger("count") || 1
         const apartments = await getExistingLinks()
         await interaction.reply(apartments.slice(-count).join('\n').slice(-2000))
       }
