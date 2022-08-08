@@ -13,7 +13,7 @@ const server = http.createServer((req, res) => {
   res.end()
 })
 
-const scraper = new Scraper(process.env.SCRAPE_URL)
+const scraper = new Scraper(process.env.SCRAPE_URL, process.env.SCRAPE_TROJMIASTO_URL)
 
 const dcClient = new Discord({
   token: process.env.CLIENT_TOKEN,
@@ -24,7 +24,10 @@ await dcClient.login()
 
 const main = async () => {
   try {
-    const scrapedLinks = await scraper.getLinks()
+    const olxLinks = await scraper.getOlxLinks().catch(() => [])
+    const trojmaistoLinks = await scraper.getTrojmiastoLinks().catch(() => [])
+    const scrapedLinks = [...olxLinks, ...trojmaistoLinks]
+
     const currentLinks = await getExistingLinks()
 
     const newLinks = scrapedLinks.filter((link) => !currentLinks.includes(link))

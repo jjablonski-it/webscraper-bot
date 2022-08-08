@@ -1,28 +1,22 @@
-import { JSDOM } from 'jsdom'
-import axios from 'axios'
 import puppeteer from 'puppeteer'
 
 const browser = await puppeteer.launch({
   headless: true,
   args: ['--no-sandbox', '--disable-setuid-sandbox'],
 })
-const cardSlector = '[data-cy=l-card]'
+const olxSelector = '[data-cy=l-card]'
+const trojmiastoSelector = '.listItemFirstPhoto'
 export class Scraper {
-  constructor(url) {
+  constructor(url, trojmiastoUrl) {
     this.url = url
+    this.trojmiastoUrl = trojmiastoUrl
   }
 
-  async getDom(url) {
-    const data = await axios.get(url || this.url).then((res) => res.data)
-    const dom = new JSDOM(data)
-    return dom
-  }
-
-  async getLinks(url) {
+  async getOlxLinks(url) {
     const page = await browser.newPage()
     await page.goto(url || this.url)
-    await page.waitForSelector(cardSlector)
-    const links = await page.$$(`${cardSlector} > a`)
+    await page.waitForSelector(olxSelector)
+    const links = await page.$$(`${olxSelector} > a`)
     const res = await Promise.all(
       links.map((handle) => handle.getProperty('href'))
     )
@@ -30,4 +24,18 @@ export class Scraper {
     await page.close()
     return hrefs
   }
+
+  async getTrojmiastoLinks(url) {
+    const page = await browser.newPage()
+    await page.goto(url || this.trojmiastoUrl)
+    await page.waitForSelector(trojmiastoSelector)
+    const links = await page.$$(trojmiastoSelector)
+    const res = await Promise.all(
+      links.map((handle) => handle.getProperty('href'))
+    )
+    const hrefs = await Promise.all(res.map((href) => href.jsonValue()))
+    await page.close()
+    return hrefs
+  }
+
 }
