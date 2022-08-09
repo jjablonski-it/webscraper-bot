@@ -1,5 +1,5 @@
 import { REST, Routes, SlashCommandBuilder } from 'discord.js'
-import { CONFIG } from './config'
+import { CONFIG } from '../config'
 
 const commands = [
   {
