@@ -1,9 +1,8 @@
+import http from 'http'
+import { CONFIG } from './config.js'
+import { addApartments, getExistingLinks } from './db.js'
 import { Discord } from './discord.js'
 import { Scraper } from './scraper.js'
-import { config } from 'dotenv'
-import { addApartments, getExistingLinks } from './db.js'
-import http from 'http'
-config()
 
 const PORT = process.env.PORT || 3000
 
@@ -16,7 +15,7 @@ const server = http.createServer((req, res) => {
 const scraper = new Scraper(process.env.SCRAPE_URL, process.env.SCRAPE_TROJMIASTO_URL)
 
 const dcClient = new Discord({
-  token: process.env.CLIENT_TOKEN,
+  token: CONFIG.CLIENT_TOKEN,
   channelId: '1004810730761093152',
 })
 await dcClient.registerCommands()

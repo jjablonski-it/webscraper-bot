@@ -2,11 +2,12 @@
   "name": "apartments",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "commands": "node src/commands.js"
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "dev": "nodemon src/main.ts",
+    "commands": "node dist/commands.js"
   },
   "author": "Jakub Jablonski",
   "license": "ISC",

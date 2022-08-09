@@ -1,6 +1,7 @@
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
+      CLIENT_ID: string
       CLIENT_TOKEN: string
       DATABASE_URL: string
       DEFAULT_SCRAPE_INTERVAL?: `${number}`
