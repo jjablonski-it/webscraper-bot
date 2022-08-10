@@ -18,6 +18,37 @@ const commands = [
         .setRequired(false)
     )
     .toJSON(),
+  new SlashCommandBuilder()
+    .setName('new-job')
+    .setDescription('Creates a new scraper job')
+    .addStringOption((option) =>
+      option.setName('name').setDescription('Name of the job').setRequired(true)
+    )
+    .addStringOption((option) =>
+      option
+        .setName('url')
+        .setDescription('The URL to scrape')
+        .setRequired(true)
+    )
+    .addStringOption((option) =>
+      option
+        .setName('selector')
+        .setDescription('The link CSS selector to use')
+        .setRequired(true)
+    )
+    .addIntegerOption((option) =>
+      option
+        .setName('interval')
+        .setDescription('The interval to scrape in minutes')
+        .setMinValue(1)
+        .setMaxValue(1_440)
+        .setRequired(true)
+    )
+    .addChannelOption((option) =>
+      option
+        .setName('channel')
+        .setDescription('The channel to send the links to')
+    ),
 ]
 
 export const registerCommands = async (clientId: string, guildId: string) => {
