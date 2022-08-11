@@ -16,12 +16,17 @@ export const runJob = async (job: Job) => {
     const links = await scrapeLinks(url, selector)
     const existingLinks = await getExistingLinks(guildId, name)
     const newLinks = links.filter((link) => !existingLinks.includes(link))
+
+    let message: string
     if (newLinks.length) {
       await saveLinks(guildId, name, newLinks)
-      console.log(`Found ${newLinks.length} new links`)
-      console.log(newLinks)
-      await sendMessage(channelId, newLinks.join('\n'))
+      message = `Found ${newLinks.length} new links:\n${newLinks.join('\n')}`
+    } else {
+      message = 'No new links found'
     }
+
+    console.log(message)
+    await sendMessage(channelId, message)
   } catch (e) {
     console.error(`Error running job ${name} from ${guildId}`, e)
   }

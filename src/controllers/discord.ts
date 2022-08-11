@@ -95,7 +95,8 @@ function handleCommands(client: Client<boolean>) {
           return
         }
         const job = await getJob(interaction.guild?.id!, name)
-        await runJob(job)
+        await interaction.reply(`Running job ${name}...`)
+         runJob(job)
       }
     } catch (e) {
       console.error('Error while handling interaction', interaction, e)
