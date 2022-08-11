@@ -24,6 +24,17 @@ export const getJobs = async (guildId?: string) => {
   })
 }
 
+export const getJob = async (guildId: string, name: string): Promise<Job> => {
+  return await client.job.findUniqueOrThrow({
+    where: {
+      name_guildId: {
+        guildId,
+        name,
+      },
+    },
+  })
+}
+
 export const saveLinks = async (
   guildId: string,
   jobName: string,
