@@ -1,23 +1,13 @@
+import { Job } from '@prisma/client'
 import { REST, Routes, SlashCommandBuilder } from 'discord.js'
 import { CONFIG } from '../config'
+import { getJobs } from './db'
 
-const commands = [
+const getCommands = (jobs: Job[]) => [
   {
     name: 'ping',
     description: 'Replies with Pong!',
   },
-  new SlashCommandBuilder()
-    .setName('last')
-    .setDescription("Shows the last x apartments' links")
-    .addIntegerOption((option) =>
-      option
-        .setName('count')
-        .setDescription('Number of apartments to show')
-        .setMinValue(1)
-        .setMaxValue(25)
-        .setRequired(false)
-    )
-    .toJSON(),
   new SlashCommandBuilder()
     .setName('create-job')
     .setDescription('Creates a new scraper job')
@@ -33,14 +23,14 @@ const commands = [
     .addStringOption((option) =>
       option
         .setName('selector')
-        .setDescription('The link CSS selector to use')
+        .setDescription('The query selector to a link')
         .setRequired(true)
     )
     .addIntegerOption((option) =>
       option
         .setName('interval')
         .setDescription('The interval to scrape in minutes')
-        .setMinValue(1)
+        .setMinValue(0)
         .setMaxValue(1_440)
         .setRequired(true)
     )
@@ -53,7 +43,11 @@ const commands = [
     .setName('run-job')
     .setDescription('Runs a scraper job')
     .addStringOption((option) =>
-      option.setName('name').setDescription('Name of the job').setRequired(true)
+      option
+        .setName('name')
+        .setDescription('Name of the job')
+        .setRequired(true)
+        .addChoices(...jobs.map((job) => ({ name: job.name, value: job.name })))
     ),
   new SlashCommandBuilder()
     .setName('list-jobs')
@@ -79,8 +73,9 @@ export const registerCommands = async (clientId: string, guildId: string) => {
   const rest = new REST({ version: '10' }).setToken(CONFIG.CLIENT_TOKEN)
   try {
     console.log(`Registering commands for ${guildId}`)
+    const jobs = await getJobs(guildId)
     await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
-      body: commands,
+      body: getCommands(jobs),
     })
   } catch (error) {
     console.error(error)
