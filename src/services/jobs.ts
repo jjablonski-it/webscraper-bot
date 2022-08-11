@@ -51,10 +51,11 @@ export const runJobs = async () => {
 export const runIntervalJobs = async () => {
   let i = 0
   const run = async () => {
-    const jobsToRun = jobs.filter(({ interval }) => i % interval === 0)
+    const jobsToRun = jobs.filter(
+      ({ interval, active }) => i % interval === 0 && active
+    )
     console.log(`${i}: Running ${jobsToRun.length} jobs`)
     for (const job of jobsToRun) {
-      if (!job.active) continue
       await runJob(job)
     }
     i++
