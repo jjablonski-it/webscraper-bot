@@ -6,7 +6,6 @@ const browser = await puppeteer.launch({
 })
 
 export const scrapeLinks = async (url: string, selector: string): Promise<Array<string>> => {
-  console.log('scraping links', url, selector)
   const page = await browser.newPage()
   await page.setCacheEnabled(false)
   await page.goto(url)
