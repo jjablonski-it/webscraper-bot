@@ -1,7 +1,7 @@
 import { Job, Prisma } from '@prisma/client'
 import { ProtocolError } from 'puppeteer'
 import { sendMessage } from '../controllers/discord'
-import { getExistingLinks, getJobs, saveJob, saveLinks } from './db'
+import { getLinks, getJobs, saveJob, saveLinks, updateJob } from './db'
 import { scrapeLinks } from './scraper'
 
 const jobs: Job[] = await getJobs()
@@ -15,7 +15,7 @@ export const runJob = async (job: Job) => {
   const { name, guildId, url, selector, channelId } = job
   try {
     const links = await scrapeLinks(url, selector)
-    const existingLinks = await getExistingLinks(guildId, name)
+    const existingLinks = await getLinks(guildId, name)
     const newLinks = links.filter((link) => !existingLinks.includes(link))
 
     let message: string
@@ -34,8 +34,11 @@ export const runJob = async (job: Job) => {
     if (e instanceof ProtocolError) {
       await sendMessage(
         channelId,
-        `Job **${name}** failed:\n${e.originalMessage}`
+        `Job **${name}** failed:\n${e.originalMessage}${
+          job.active ? '\nDisabling job...' : ''
+        }`
       )
+      if (job.active) updateJob(guildId, name, { active: false })
     }
   }
 }

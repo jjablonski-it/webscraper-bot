@@ -54,7 +54,7 @@ function handleCommands(client: Client<boolean>) {
         const channel =
           interaction.options.getChannel('channel') || interaction.channel
 
-        if (!name || !url || !selector || !interval) {
+        if (!name || !url || !selector || !interval && interval !== 0) {
           await interaction.reply('Missing required options')
           return
         }

@@ -83,7 +83,7 @@ export const saveLinks = async (
   })
 }
 
-export const getExistingLinks = async (
+export const getLinks = async (
   guildId: string,
   jobName: string
 ): Promise<string[]> => {
