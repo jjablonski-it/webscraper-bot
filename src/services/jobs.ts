@@ -1,5 +1,5 @@
 import { Job, Prisma } from '@prisma/client'
-import { ProtocolError, PuppeteerErrors } from 'puppeteer'
+import { ProtocolError } from 'puppeteer'
 import { sendMessage } from '../controllers/discord'
 import { getExistingLinks, getJobs, saveJob, saveLinks } from './db'
 import { scrapeLinks } from './scraper'
