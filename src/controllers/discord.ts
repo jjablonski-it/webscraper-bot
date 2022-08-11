@@ -1,7 +1,7 @@
 import { ChannelType, Client, GatewayIntentBits, TextChannel } from 'discord.js'
 import { CONFIG } from '../config.js'
-import { saveGuild } from '../services/db.js'
-import { createJob } from '../services/jobs.js'
+import { getJob, getJobs, saveGuild } from '../services/db.js'
+import { createJob, runJob } from '../services/jobs.js'
 
 let client: Client<boolean>
 
@@ -29,6 +29,7 @@ function handleCommands(client: Client<boolean>) {
   client.on('interactionCreate', async (interaction) => {
     try {
       if (!interaction.isChatInputCommand()) return
+      const guildId = interaction.guild?.id
 
       if (interaction.commandName === 'ping') {
         await interaction.reply('Pong!')
@@ -66,6 +67,33 @@ function handleCommands(client: Client<boolean>) {
         })
         await interaction.reply(`Job ${name} created in ${channel?.toString()}`)
       }
+
+      if (interaction.commandName === 'list-jobs') {
+        if (!guildId) {
+          await interaction.reply('Guild not found')
+          return
+        }
+        const jobs = await getJobs()
+        await interaction.reply(
+          `${jobs.length} job${jobs.length > 1 ? 's' : ''} found: \n${jobs
+            .map((j) => j.name)
+            .join(', ')}`
+        )
+      }
+
+      if (interaction.commandName === 'run-job') {
+        const name = interaction.options.getString('name')
+        if (!name) {
+          await interaction.reply('Missing required options')
+          return
+        }
+        if (!guildId) {
+          await interaction.reply('Guild not found')
+          return
+        }
+        const job = await getJob(interaction.guild?.id!, name)
+        await runJob(job)
+      }
     } catch (e) {
       console.error('Error while handling interaction', interaction, e)
     }
@@ -77,5 +105,5 @@ export const sendMessage = async (channelId: string, message: string) => {
   const channel = client.channels.cache.get(channelId) as TextChannel
   if (!channel.isTextBased())
     throw new Error(`Channel ${channelId} is not a text channel`)
-  return await channel?.send(message)
+  return await channel?.send(message.substring(0, 2000))
 }

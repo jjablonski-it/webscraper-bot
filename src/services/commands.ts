@@ -49,13 +49,36 @@ const commands = [
         .setName('channel')
         .setDescription('The channel to send the links to')
     ),
+  new SlashCommandBuilder()
+    .setName('run-job')
+    .setDescription('Runs a scraper job')
+    .addStringOption((option) =>
+      option.setName('name').setDescription('Name of the job').setRequired(true)
+    ),
+  new SlashCommandBuilder()
+    .setName('list-jobs')
+    .setDescription('Lists all scraper jobs'),
+  // new SlashCommandBuilder()
+  // .setName('stop-job')
+  // .setDescription('Stops a scraper job')
+  // .addStringOption((option) =>
+  //   option.setName('name').setDescription('Name of the job').setRequired(true)
+  // )
+  // .addChannelOption((option) =>
+  //   option
+  //     .setName('channel')
+  //     .setDescription('The channel to send the links to')
+  // ),
+  // new SlashCommandBuilder()
+  // .setName('delete-job')
+  // .setDescription('Deletes a scraper job')
 ]
 
 export const registerCommands = async (clientId: string, guildId: string) => {
   // TODO add parameters per guild
   const rest = new REST({ version: '10' }).setToken(CONFIG.CLIENT_TOKEN)
   try {
-    console.log(`Registering commands for ${guildId}`);
+    console.log(`Registering commands for ${guildId}`)
     await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
       body: commands,
     })
