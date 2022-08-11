@@ -1,4 +1,5 @@
 import { Job, Prisma } from '@prisma/client'
+import { ProtocolError, PuppeteerErrors } from 'puppeteer'
 import { sendMessage } from '../controllers/discord'
 import { getExistingLinks, getJobs, saveJob, saveLinks } from './db'
 import { scrapeLinks } from './scraper'
@@ -30,6 +31,12 @@ export const runJob = async (job: Job) => {
     await sendMessage(channelId, message)
   } catch (e) {
     console.error(`Error running job ${name} from ${guildId}`, e)
+    if (e instanceof ProtocolError) {
+      await sendMessage(
+        channelId,
+        `Job **${name}** failed:\n${e.originalMessage}`
+      )
+    }
   }
 }
 
