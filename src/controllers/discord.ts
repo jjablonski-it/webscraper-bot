@@ -1,7 +1,4 @@
-import {
-  Client,
-  GatewayIntentBits, TextChannel
-} from 'discord.js'
+import { Client, GatewayIntentBits, TextChannel } from 'discord.js'
 import { CONFIG } from '../config.js'
 import { getExistingLinks } from '../services/db.js'
 
@@ -39,8 +36,10 @@ function handleCommands() {
 }
 
 export const sendMessage = async (channelId: string, message: string) => {
+  console.log(`Sending message to ${channelId}: ${message}`)
   const channel = client.channels.cache.get(channelId) as TextChannel
-  // TODO check if TextChannel
+  if (!channel.isTextBased())
+    throw new Error(`Channel ${channelId} is not a text channel`)
   return await channel?.send(message)
 }
 

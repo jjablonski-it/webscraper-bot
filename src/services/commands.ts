@@ -54,13 +54,10 @@ const commands = [
 export const registerCommands = async (clientId: string, guildId: string) => {
   const rest = new REST({ version: '10' }).setToken(CONFIG.CLIENT_TOKEN)
   try {
-    console.log('Started refreshing application (/) commands.')
-
+    console.log(`Registering commands for ${guildId}`);
     await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
       body: commands,
     })
-
-    console.log('Successfully reloaded application (/) commands.')
   } catch (error) {
     console.error(error)
   }
