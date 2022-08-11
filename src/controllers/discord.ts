@@ -1,5 +1,6 @@
 import { ChannelType, Client, GatewayIntentBits, TextChannel } from 'discord.js'
 import { CONFIG } from '../config.js'
+import { saveGuild } from '../services/db.js'
 import { createJob } from '../services/jobs.js'
 
 let client: Client<boolean>
@@ -8,15 +9,23 @@ export const getClient = async () => {
   if (client) return client
 
   client = new Client({ intents: GatewayIntentBits.Guilds })
-  client.once('ready', (a) => {
-    console.log(`Logged in as ${a.user?.tag}!`)
-  })
-  handleCommands()
+  handleEvents(client)
+  handleCommands(client)
   await client.login(CONFIG.CLIENT_TOKEN)
   return client
 }
 
-function handleCommands() {
+function handleEvents(client: Client<boolean>) {
+  client.once('ready', (a) => {
+    console.log(`Logged in as ${a.user?.tag}!`)
+  })
+  client.on('guildCreate', async (guild) => {
+    console.log(`Joined guild ${guild.name}`)
+    await saveGuild(guild.id)
+  })
+}
+
+function handleCommands(client: Client<boolean>) {
   client.on('interactionCreate', async (interaction) => {
     try {
       if (!interaction.isChatInputCommand()) return
