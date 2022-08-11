@@ -9,3 +9,32 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Guild {
+  id   String @id @default(cuid())
+  jobs Job[]
+}
+
+model Job {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  selector  String
+  interval  Int
+  channelId String
+  active    Boolean
+  guildId   String
+  links     Link[]
+  Guild     Guild    @relation(fields: [guildId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Link {
+  id        String   @id @default(cuid())
+  url       String
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
