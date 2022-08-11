@@ -105,7 +105,7 @@ function handleCommands(client: Client<boolean>) {
 }
 
 export const sendMessage = async (channelId: string, message: string) => {
-  console.log(`Sending message to ${channelId}: ${message}`)
+  console.log(`Sending message to ${channelId}`)
   const channel = client.channels.cache.get(channelId) as TextChannel
   if (!channel.isTextBased())
     throw new Error(`Channel ${channelId} is not a text channel`)
