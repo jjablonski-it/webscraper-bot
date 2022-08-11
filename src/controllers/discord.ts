@@ -1,5 +1,6 @@
 import { ChannelType, Client, GatewayIntentBits, TextChannel } from 'discord.js'
 import { CONFIG } from '../config.js'
+import { registerCommands } from '../services/commands.js'
 import { getJob, getJobs, saveGuild } from '../services/db.js'
 import { createJob, runJob } from '../services/jobs.js'
 
@@ -30,6 +31,10 @@ function handleCommands(client: Client<boolean>) {
     try {
       if (!interaction.isChatInputCommand()) return
       const guildId = interaction.guild?.id
+        if (!guildId) {
+          await interaction.reply('Guild not found')
+          return
+        }
 
       if (interaction.commandName === 'ping') {
         await interaction.reply('Pong!')
@@ -58,7 +63,7 @@ function handleCommands(client: Client<boolean>) {
           selector,
           interval,
           channelId: channel.id,
-          active: true,
+          active: interval > 0,
           Guild: {
             connect: {
               id: interaction.guild?.id,
@@ -66,13 +71,10 @@ function handleCommands(client: Client<boolean>) {
           },
         })
         await interaction.reply(`Job ${name} created in ${channel?.toString()}`)
+        registerCommands(CONFIG.CLIENT_ID, guildId)
       }
 
       if (interaction.commandName === 'list-jobs') {
-        if (!guildId) {
-          await interaction.reply('Guild not found')
-          return
-        }
         const jobs = await getJobs()
         await interaction.reply(
           `${jobs.length} job${jobs.length > 1 ? 's' : ''} found: \n${jobs
@@ -88,10 +90,6 @@ function handleCommands(client: Client<boolean>) {
         const name = interaction.options.getString('name')
         if (!name) {
           await interaction.reply('Missing required options')
-          return
-        }
-        if (!guildId) {
-          await interaction.reply('Guild not found')
           return
         }
         const job = await getJob(interaction.guild?.id!, name)
