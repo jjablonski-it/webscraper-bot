@@ -14,7 +14,7 @@
     "@prisma/client": "4.1.1",
     "discord.js": "^14.1.2",
     "dotenv": "^16.0.1",
-    "prisma": "^4.1.1",
+    "prisma": "^4.2.1",
     "puppeteer": "^16.0.0"
   },
   "devDependencies": {
