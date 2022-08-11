@@ -35,6 +35,22 @@ export const getJob = async (guildId: string, name: string): Promise<Job> => {
   })
 }
 
+export const updateJob = async (
+  guildId: string,
+  name: string,
+  job: Prisma.JobUpdateInput
+): Promise<Job> => {
+  return await client.job.update({
+    data: job,
+    where: {
+      name_guildId: {
+        guildId,
+        name,
+      },
+    },
+  })
+}
+
 export const saveLinks = async (
   guildId: string,
   jobName: string,
