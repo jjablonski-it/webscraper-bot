@@ -47,9 +47,13 @@ function handleCommands() {
           url,
           selector,
           interval,
-          channel: channel.id,
-          guild: interaction.guildId!,
+          channelId: channel.id,
           active: true,
+          Guild: {
+            connect: {
+              id: interaction.guild?.id,
+            },
+          },
         })
         await interaction.reply(`Job ${name} created in ${channel?.toString()}`)
       }
