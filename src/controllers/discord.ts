@@ -1,16 +1,16 @@
-import { Client, GatewayIntentBits, TextChannel } from 'discord.js'
+import { Client, GatewayIntentBits, GuildSystemChannelFlags, SystemChannelFlagsBitField, TextChannel } from 'discord.js'
 import { CONFIG } from '../config.js'
 import { getExistingLinks } from '../services/db.js'
 
 export const client = new Client({ intents: GatewayIntentBits.Guilds })
 
-client.once('ready', () => {
-  console.log(`Logged in as ${client.user?.tag}!`)
+client.once('ready', (a) => {
+  console.log(`Logged in as ${a.user?.tag}!`)
 })
-
+handleCommands()
 await client.login(CONFIG.CLIENT_TOKEN)
 
-const handleCommands = () => {
+function handleCommands() {
   client.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand()) return
 
@@ -29,8 +29,11 @@ const handleCommands = () => {
   })
 }
 
-const sendMessage = async (channelId: string, message: string) => {
+export const sendMessage = async (channelId: string, message: string) => {
   const channel = client.channels.cache.get(channelId) as TextChannel
   // TODO check if TextChannel
   return await channel?.send(message)
 }
+
+// export const sendMessageToMainChannel = async (message: string) => {
+//   const channel = client.channels.cache.find(channel => channel.type)
