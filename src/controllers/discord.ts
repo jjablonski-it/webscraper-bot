@@ -1,6 +1,6 @@
-import { Client, GatewayIntentBits, TextChannel } from 'discord.js'
+import { ChannelType, Client, GatewayIntentBits, TextChannel } from 'discord.js'
 import { CONFIG } from '../config.js'
-import { getExistingLinks } from '../services/db.js'
+import { createJob } from '../services/jobs.js'
 
 let client: Client<boolean>
 
@@ -18,19 +18,43 @@ export const getClient = async () => {
 
 function handleCommands() {
   client.on('interactionCreate', async (interaction) => {
-    if (!interaction.isChatInputCommand()) return
+    try {
+      if (!interaction.isChatInputCommand()) return
 
-    if (interaction.commandName === 'ping') {
-      const apartments = await getExistingLinks()
-      await interaction.reply(
-        `Pong! ${apartments.length} apartments found so far`
-      )
-    }
+      if (interaction.commandName === 'ping') {
+        await interaction.reply('Pong!')
+      }
 
-    if (interaction.commandName === 'last') {
-      const count = interaction.options.getInteger('count') || 1
-      const apartments = await getExistingLinks()
-      await interaction.reply(apartments.slice(-count).join('\n').slice(-2000))
+      if (interaction.commandName === 'create-job') {
+        const name = interaction.options.getString('name')
+        const url = interaction.options.getString('url')
+        const selector = interaction.options.getString('selector')
+        const interval = interaction.options.getInteger('interval')
+        const channel =
+          interaction.options.getChannel('channel') || interaction.channel
+
+        if (!name || !url || !selector || !interval) {
+          await interaction.reply('Missing required options')
+          return
+        }
+        if (channel?.type !== ChannelType.GuildText) {
+          await interaction.reply('Channel must be a text channel')
+          return
+        }
+
+        await createJob({
+          name,
+          url,
+          selector,
+          interval,
+          channel: channel.id,
+          guild: interaction.guildId!,
+          active: true,
+        })
+        await interaction.reply(`Job ${name} created in ${channel?.toString()}`)
+      }
+    } catch (e) {
+      console.error('Error while handling interaction', interaction, e)
     }
   })
 }
@@ -42,6 +66,3 @@ export const sendMessage = async (channelId: string, message: string) => {
     throw new Error(`Channel ${channelId} is not a text channel`)
   return await channel?.send(message)
 }
-
-// export const sendMessageToMainChannel = async (message: string) => {
-//   const channel = client.channels.cache.find(channel => channel.type)

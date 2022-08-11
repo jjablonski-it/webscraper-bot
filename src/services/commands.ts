@@ -19,7 +19,7 @@ const commands = [
     )
     .toJSON(),
   new SlashCommandBuilder()
-    .setName('new-job')
+    .setName('create-job')
     .setDescription('Creates a new scraper job')
     .addStringOption((option) =>
       option.setName('name').setDescription('Name of the job').setRequired(true)
