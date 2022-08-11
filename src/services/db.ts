@@ -1,21 +1,27 @@
-import { Job, Prisma, PrismaClient } from '@prisma/client'
+import { Guild, Job, Prisma, PrismaClient } from '@prisma/client'
 
 const client = new PrismaClient()
 
-export const getExistingLinks = async (
-  guildId: string,
-  jobName: string
-): Promise<string[]> => {
-  return await client.link
-    .findMany({
-      where: {
-        job: {
-          guildId: guildId,
-          name: jobName,
-        },
-      },
-    })
-    .then((links) => links.map((link) => link.url))
+export const saveGuild = async (guildId: string): Promise<Guild> => {
+  return await client.guild.create({ data: { id: guildId } })
+}
+
+export const getGuilds = async (): Promise<Guild[]> => {
+  return await client.guild.findMany()
+}
+
+export const saveJob = async (job: Prisma.JobCreateInput): Promise<Job> => {
+  return await client.job.create({
+    data: job,
+  })
+}
+
+export const getJobs = async (guildId?: string) => {
+  return client.job.findMany({
+    where: {
+      ...(guildId && { guildId }),
+    },
+  })
 }
 
 export const saveLinks = async (
@@ -39,16 +45,18 @@ export const saveLinks = async (
   })
 }
 
-export const saveJob = async (job: Prisma.JobCreateInput): Promise<Job> => {
-  return await client.job.create({
-    data: job,
-  })
-}
-
-export const getJobs = async (guildId?: string) => {
-  return client.job.findMany({
-    where: {
-      ...(guildId && { guildId }),
-    },
-  })
+export const getExistingLinks = async (
+  guildId: string,
+  jobName: string
+): Promise<string[]> => {
+  return await client.link
+    .findMany({
+      where: {
+        job: {
+          guildId: guildId,
+          name: jobName,
+        },
+      },
+    })
+    .then((links) => links.map((link) => link.url))
 }
