@@ -11,8 +11,10 @@ datasource db {
 }
 
 model Guild {
-  id   String @id @default(cuid())
-  jobs Job[]
+  id        String   @id @default(cuid())
+  jobs      Job[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Job {
@@ -24,8 +26,8 @@ model Job {
   channelId String
   active    Boolean
   guildId   String
-  links     Link[]
   Guild     Guild    @relation(fields: [guildId], references: [id])
+  links     Link[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
