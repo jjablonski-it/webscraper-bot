@@ -51,6 +51,17 @@ export const updateJob = async (
   })
 }
 
+export const deleteJob = async (guildId: string, name: string) => {
+  return await client.job.delete({
+    where: {
+      name_guildId: {
+        guildId,
+        name,
+      },
+    },
+  })
+}
+
 export const saveLinks = async (
   guildId: string,
   jobName: string,
