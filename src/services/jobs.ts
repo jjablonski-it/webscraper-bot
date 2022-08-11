@@ -25,7 +25,7 @@ export const runJob = async (job: Job) => {
       message = 'No new links found'
     }
 
-    message = `Job ${name}:\n${message}`
+    message = `Job **${name}**:\n${message}`
     console.log(message)
     await sendMessage(channelId, message)
   } catch (e) {
@@ -44,12 +44,13 @@ export const runJobs = async () => {
 export const runIntervalJobs = async () => {
   let i = 0
   const run = async () => {
-    const jobsToRun = jobs.filter((job) => job.interval % i++ === 0)
-    console.log(`Running ${jobsToRun.length} jobs`)
+    const jobsToRun = jobs.filter(({ interval }) => i % interval === 0)
+    console.log(`${i}: Running ${jobsToRun.length} jobs`)
     for (const job of jobsToRun) {
       if (!job.active) continue
       await runJob(job)
     }
+    i++
   }
   run()
   const intervalId = setInterval(run, 1000 * 60)
