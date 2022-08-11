@@ -76,8 +76,11 @@ function handleCommands(client: Client<boolean>) {
         const jobs = await getJobs()
         await interaction.reply(
           `${jobs.length} job${jobs.length > 1 ? 's' : ''} found: \n${jobs
-            .map((j) => j.name)
-            .join(', ')}`
+            .map(
+              ({ name, url, selector, interval, active }) =>
+                `**${name}** \n url: ${url} \n selector: \`${selector}\` \n interval: \`${interval}\` \n active: \`${active}\``
+            )
+            .join('\n\n')}`
         )
       }
 
