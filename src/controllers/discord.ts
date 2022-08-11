@@ -1,7 +1,13 @@
 import { ChannelType, Client, GatewayIntentBits, TextChannel } from 'discord.js'
 import { CONFIG } from '../config.js'
 import { registerCommands } from '../services/commands.js'
-import { getJob, getJobs, saveGuild } from '../services/db.js'
+import {
+  deleteJob,
+  getJob,
+  getJobs,
+  saveGuild,
+  updateJob,
+} from '../services/db.js'
 import { createJob, runJob } from '../services/jobs.js'
 
 let client: Client<boolean>
@@ -31,10 +37,10 @@ function handleCommands(client: Client<boolean>) {
     try {
       if (!interaction.isChatInputCommand()) return
       const guildId = interaction.guild?.id
-        if (!guildId) {
-          await interaction.reply('Guild not found')
-          return
-        }
+      if (!guildId) {
+        await interaction.reply('Guild not found')
+        return
+      }
 
       if (interaction.commandName === 'ping') {
         await interaction.reply('Pong!')
@@ -74,6 +80,39 @@ function handleCommands(client: Client<boolean>) {
         registerCommands(CONFIG.CLIENT_ID, guildId)
       }
 
+      if (interaction.commandName === 'delete-job') {
+        const name = interaction.options.getString('name')
+        if (!name) {
+          await interaction.reply('Missing required options')
+          return
+        }
+        await deleteJob(guildId, name)
+        await interaction.reply(`Job ${name} deleted`)
+        registerCommands(CONFIG.CLIENT_ID, guildId)
+      }
+
+      if (interaction.commandName === 'disable-job') {
+        const name = interaction.options.getString('name')
+        if (!name) {
+          await interaction.reply('Missing required options')
+          return
+        }
+        await updateJob(guildId, name, { active: false })
+        await interaction.reply(`Job ${name} disabled`)
+        registerCommands(CONFIG.CLIENT_ID, guildId)
+      }
+
+      if (interaction.commandName === 'enable-job') {
+        const name = interaction.options.getString('name')
+        if (!name) {
+          await interaction.reply('Missing required options')
+          return
+        }
+        await updateJob(guildId, name, { active: true })
+        await interaction.reply(`Job ${name} enabled`)
+        registerCommands(CONFIG.CLIENT_ID, guildId)
+      }
+
       if (interaction.commandName === 'list-jobs') {
         const jobs = await getJobs()
         await interaction.reply(
@@ -94,7 +133,7 @@ function handleCommands(client: Client<boolean>) {
         }
         const job = await getJob(interaction.guild?.id!, name)
         await interaction.reply(`Running job ${name}...`)
-         runJob(job)
+        runJob(job)
       }
     } catch (e) {
       console.error('Error while handling interaction', interaction, e)
