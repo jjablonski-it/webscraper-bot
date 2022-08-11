@@ -1,9 +1,9 @@
 import { Job, Prisma } from '@prisma/client'
 import { sendMessage } from '../controllers/discord'
-import { getExistingLinks, saveJob, saveLinks } from './db'
+import { getExistingLinks, getJobs, saveJob, saveLinks } from './db'
 import { scrapeLinks } from './scraper'
 
-const jobs: Job[] = []
+const jobs: Job[] = await getJobs()
 
 export const createJob = async (jobInput: Prisma.JobCreateInput) => {
   const createdJob = await saveJob(jobInput)
@@ -25,6 +25,7 @@ export const runJob = async (job: Job) => {
       message = 'No new links found'
     }
 
+    message = `Job ${name}:\n${message}`
     console.log(message)
     await sendMessage(channelId, message)
   } catch (e) {
@@ -38,4 +39,19 @@ export const runJobs = async () => {
     if (!job.active) continue
     await runJob(job)
   }
+}
+
+export const runIntervalJobs = async () => {
+  let i = 0
+  const run = async () => {
+    const jobsToRun = jobs.filter((job) => job.interval % i++ === 0)
+    console.log(`Running ${jobsToRun.length} jobs`)
+    for (const job of jobsToRun) {
+      if (!job.active) continue
+      await runJob(job)
+    }
+  }
+  run()
+  const intervalId = setInterval(run, 1000 * 60)
+  return intervalId
 }
