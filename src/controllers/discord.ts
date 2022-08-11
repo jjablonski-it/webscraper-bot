@@ -1,14 +1,23 @@
-import { Client, GatewayIntentBits, GuildSystemChannelFlags, SystemChannelFlagsBitField, TextChannel } from 'discord.js'
+import {
+  Client,
+  GatewayIntentBits, TextChannel
+} from 'discord.js'
 import { CONFIG } from '../config.js'
 import { getExistingLinks } from '../services/db.js'
 
-export const client = new Client({ intents: GatewayIntentBits.Guilds })
+let client: Client<boolean>
 
-client.once('ready', (a) => {
-  console.log(`Logged in as ${a.user?.tag}!`)
-})
-handleCommands()
-await client.login(CONFIG.CLIENT_TOKEN)
+export const getClient = async () => {
+  if (client) return client
+
+  client = new Client({ intents: GatewayIntentBits.Guilds })
+  client.once('ready', (a) => {
+    console.log(`Logged in as ${a.user?.tag}!`)
+  })
+  handleCommands()
+  await client.login(CONFIG.CLIENT_TOKEN)
+  return client
+}
 
 function handleCommands() {
   client.on('interactionCreate', async (interaction) => {
