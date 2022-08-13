@@ -48,7 +48,6 @@ export const runJob = async (job: Job) => {
 
 export const runJobs = async (jobs: Job[]) => {
   for (const job of jobs) {
-    console.log(`Running job ${job.name} from ${job.guildId}`)
     if (!job.active) continue
     await runJob(job)
   }
