@@ -52,6 +52,7 @@ function handleCommands(client: Client<boolean>) {
         const url = interaction.options.getString('url')
         const selector = interaction.options.getString('selector')
         const interval = interaction.options.getInteger('interval')
+        const active = interaction.options.getBoolean('active') ?? true
         const channel =
           interaction.options.getChannel('channel') || interaction.channel
 
@@ -77,8 +78,8 @@ function handleCommands(client: Client<boolean>) {
           url,
           selector,
           interval,
+          active,
           channelId: channel.id,
-          active: interval > 0,
           Guild: {
             connect: {
               id: interaction.guild?.id,
@@ -101,6 +102,7 @@ function handleCommands(client: Client<boolean>) {
         const url = interaction.options.getString('url')
         const selector = interaction.options.getString('selector')
         const interval = interaction.options.getInteger('interval')
+        const active = interaction.options.getBoolean('active')
         const channel =
           interaction.options.getChannel('channel') || interaction.channel
 
@@ -126,6 +128,7 @@ function handleCommands(client: Client<boolean>) {
           ...(url && { url }),
           ...(selector && { selector }),
           ...(interval && { interval }),
+          ...(active && { active }),
           ...(channel && { channelId: channel.id }),
         })
 

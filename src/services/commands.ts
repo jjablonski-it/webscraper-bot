@@ -55,6 +55,12 @@ const getCommands = (jobs: Job[]) => [
         .setMaxValue(1_440)
         .setRequired(true)
     )
+    .addBooleanOption((option) =>
+      option
+        .setName('active')
+        .setDescription('Whether the job is active')
+        .setRequired(false)
+    )
     .addChannelOption((option) =>
       option
         .setName('channel')
@@ -101,6 +107,12 @@ const getCommands = (jobs: Job[]) => [
         .setDescription('The interval to scrape in minutes. 0 for manual')
         .setMinValue(0)
         .setMaxValue(1_440)
+        .setRequired(false)
+    )
+    .addBooleanOption((option) =>
+      option
+        .setName('active')
+        .setDescription('Whether the job is active')
         .setRequired(false)
     )
     .addChannelOption((option) =>
