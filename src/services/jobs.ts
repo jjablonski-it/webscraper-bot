@@ -2,6 +2,7 @@ import { Job, Prisma } from '@prisma/client'
 import { ProtocolError } from 'puppeteer'
 import { sendMessage } from '../controllers/discord.js'
 import { getJobs, getLinks, saveJob, saveLinks, updateJob } from './db.js'
+import { jobOutputMessage } from './message.js'
 import { scrapeLinks } from './scraper.js'
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -12,6 +13,8 @@ export const createJob = async (jobInput: Prisma.JobCreateInput) => {
 
 export const runJob = async (job: Job) => {
   const { name, guildId, url, selector, channelId } = job
+  console.log(`Running job ${name} for guild ${guildId}`)
+
   try {
     const links = await scrapeLinks(url, selector)
     const existingLinks = await getLinks(guildId, name)
@@ -19,26 +22,25 @@ export const runJob = async (job: Job) => {
       ...new Set(links.filter((link) => !existingLinks.includes(link))),
     ]
 
-    let message: string
     if (newLinks.length) {
       await saveLinks(guildId, name, newLinks)
-      message = `Found ${newLinks.length} new links:\n${newLinks.join('\n')}`
-    } else {
-      message = 'No new links found'
+      const message = jobOutputMessage({
+        jobName: name,
+        message: `Found ${newLinks.length} new links\n${newLinks.join('\n')}`,
+      })
+      await sendMessage(channelId, message)
     }
-
-    message = `Job **${name}**:\n${message}`
-    console.log(message)
-    await sendMessage(channelId, message)
   } catch (e) {
     console.error(`Error running job ${name} from ${guildId}`, e)
     if (e instanceof ProtocolError) {
-      await sendMessage(
-        channelId,
-        `Job **${name}** failed:\n${e.originalMessage}${
+      const message = jobOutputMessage({
+        jobName: name,
+        ok: false,
+        message: `Error: ${e.originalMessage}${
           job.active ? '\nDisabling job...' : ''
-        }`
-      )
+        }`,
+      })
+      await sendMessage(channelId, message)
       if (job.active) updateJob(guildId, name, { active: false })
     }
   }

@@ -9,6 +9,7 @@ import {
   updateJob,
 } from '../services/db.js'
 import { createJob, runJob } from '../services/jobs.js'
+import { jobActionMessage } from '../services/message.js'
 
 let client: Client<boolean>
 
@@ -54,7 +55,7 @@ function handleCommands(client: Client<boolean>) {
         const channel =
           interaction.options.getChannel('channel') || interaction.channel
 
-        if (!name || !url || !selector || !interval && interval !== 0) {
+        if (!name || !url || !selector || (!interval && interval !== 0)) {
           await interaction.reply('Missing required options')
           return
         }
@@ -76,7 +77,12 @@ function handleCommands(client: Client<boolean>) {
             },
           },
         })
-        await interaction.reply(`Job ${name} created in ${channel?.toString()}`)
+        await interaction.reply(
+          jobActionMessage({
+            jobName: name,
+            action: `created in ${channel?.toString()}`,
+          })
+        )
         registerCommands(CONFIG.CLIENT_ID, guildId)
       }
 
@@ -87,7 +93,9 @@ function handleCommands(client: Client<boolean>) {
           return
         }
         await deleteJob(guildId, name)
-        await interaction.reply(`Job ${name} deleted`)
+        await interaction.reply(
+          jobActionMessage({ jobName: name, action: 'deleted' })
+        )
         registerCommands(CONFIG.CLIENT_ID, guildId)
       }
 
@@ -98,7 +106,9 @@ function handleCommands(client: Client<boolean>) {
           return
         }
         await updateJob(guildId, name, { active: false })
-        await interaction.reply(`Job ${name} disabled`)
+        await interaction.reply(
+          jobActionMessage({ jobName: name, action: 'disabled' })
+        )
         registerCommands(CONFIG.CLIENT_ID, guildId)
       }
 
@@ -109,7 +119,9 @@ function handleCommands(client: Client<boolean>) {
           return
         }
         await updateJob(guildId, name, { active: true })
-        await interaction.reply(`Job ${name} enabled`)
+        await interaction.reply(
+          jobActionMessage({ jobName: name, action: 'enabled' })
+        )
         registerCommands(CONFIG.CLIENT_ID, guildId)
       }
 
@@ -132,7 +144,9 @@ function handleCommands(client: Client<boolean>) {
           return
         }
         const job = await getJob(interaction.guild?.id, name)
-        await interaction.reply(`Running job ${name}...`)
+        await interaction.reply(
+          jobActionMessage({ jobName: name, action: 'running' })
+        )
         runJob(job)
       }
     } catch (e) {
