@@ -111,7 +111,6 @@ const getCommands = (jobs: Job[]) => [
 ]
 
 export const registerCommands = async (clientId: string, guildId: string) => {
-  // TODO add parameters per guild
   const rest = new REST({ version: '10' }).setToken(CONFIG.CLIENT_TOKEN)
   try {
     console.log(`Registering commands for ${guildId}`)
