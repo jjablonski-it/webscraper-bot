@@ -17,7 +17,7 @@ export const runJob = async (job: Job) => {
 
   try {
     const links = await scrapeLinks(url, selector)
-    const existingLinks = await getLinks(guildId, name)
+    const existingLinks = await getLinks(guildId, channelId)
     const newLinks = [
       ...new Set(links.filter((link) => !existingLinks.includes(link))),
     ]

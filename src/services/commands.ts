@@ -50,7 +50,7 @@ const getCommands = (jobs: Job[]) => [
     .addIntegerOption((option) =>
       option
         .setName('interval')
-        .setDescription('The interval to scrape in minutes')
+        .setDescription('The interval to scrape in minutes. 0 for manual')
         .setMinValue(0)
         .setMaxValue(1_440)
         .setRequired(true)
