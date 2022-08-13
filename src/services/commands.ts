@@ -79,6 +79,35 @@ const getCommands = (jobs: Job[]) => [
   new SlashCommandBuilder()
     .setName('list-jobs')
     .setDescription('Lists all scraper jobs'),
+  new SlashCommandBuilder()
+    .setName('update-job')
+    .setDescription('Edits a scraper job')
+    .addStringOption(existingJobOption(jobs))
+    .addStringOption((option) =>
+      option
+        .setName('url')
+        .setDescription('The URL to scrape')
+        .setRequired(false)
+    )
+    .addStringOption((option) =>
+      option
+        .setName('selector')
+        .setDescription('The query selector to a link')
+        .setRequired(false)
+    )
+    .addIntegerOption((option) =>
+      option
+        .setName('interval')
+        .setDescription('The interval to scrape in minutes. 0 for manual')
+        .setMinValue(0)
+        .setMaxValue(1_440)
+        .setRequired(false)
+    )
+    .addChannelOption((option) =>
+      option
+        .setName('channel')
+        .setDescription('The channel to send the links to')
+    ),
 ]
 
 export const registerCommands = async (clientId: string, guildId: string) => {

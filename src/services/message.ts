@@ -19,7 +19,7 @@ export const jobOutputMessage = ({
 
 export const jobActionMessage = ({
   action,
-  postfix,
+  postfix = '',
   ...baseProps
 }: JobBaseMessage & { action: string; postfix?: string }) =>
   `${jobBaseMessage(baseProps)} \`${action}\`${postfix}`

@@ -60,12 +60,16 @@ function handleCommands(client: Client<boolean>) {
           return
         }
         if (channel?.type !== ChannelType.GuildText) {
-          await interaction.reply(errorMessage('Channel must be a text channel'))
+          await interaction.reply(
+            errorMessage('Channel must be a text channel')
+          )
           return
         }
         const nameExists = await getJob(guildId, name)
         if (nameExists) {
-          await interaction.reply(errorMessage('Job with that name already exists'))
+          await interaction.reply(
+            errorMessage('Job with that name already exists')
+          )
         }
 
         await createJob({
@@ -81,11 +85,54 @@ function handleCommands(client: Client<boolean>) {
             },
           },
         })
+
         await interaction.reply(
           jobActionMessage({
             jobName: name,
             action: 'created in ',
             postfix: channel?.toString(),
+          })
+        )
+        registerCommands(CONFIG.CLIENT_ID, guildId)
+      }
+
+      if (interaction.commandName === 'update-job') {
+        const name = interaction.options.getString('name')
+        const url = interaction.options.getString('url')
+        const selector = interaction.options.getString('selector')
+        const interval = interaction.options.getInteger('interval')
+        const channel =
+          interaction.options.getChannel('channel') || interaction.channel
+
+        if (!name) {
+          await interaction.reply(errorMessage('Missing required options'))
+          return
+        }
+        if (channel?.type !== ChannelType.GuildText) {
+          await interaction.reply(
+            errorMessage('Channel must be a text channel')
+          )
+          return
+        }
+        const nameExists = await getJob(guildId, name)
+        if (!nameExists) {
+          await interaction.reply(
+            errorMessage('Job with that name does not exists')
+          )
+        }
+
+        await updateJob(guildId, name, {
+          ...(name && { name }),
+          ...(url && { url }),
+          ...(selector && { selector }),
+          ...(interval && { interval }),
+          ...(channel && { channelId: channel.id }),
+        })
+
+        await interaction.reply(
+          jobActionMessage({
+            jobName: name,
+            action: 'updated',
           })
         )
         registerCommands(CONFIG.CLIENT_ID, guildId)
@@ -160,6 +207,10 @@ function handleCommands(client: Client<boolean>) {
       }
     } catch (e) {
       console.error('Error while handling interaction', interaction, e)
+      if (interaction.isChatInputCommand())
+        await interaction.reply(
+          errorMessage('Error while handling interaction')
+        )
     }
   })
 }
