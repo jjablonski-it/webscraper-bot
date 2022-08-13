@@ -1,14 +1,13 @@
 import { Job, Prisma } from '@prisma/client'
 import { ProtocolError } from 'puppeteer'
 import { sendMessage } from '../controllers/discord.js'
-import { getLinks, getJobs, saveJob, saveLinks, updateJob } from './db.js'
+import { getJobs, getLinks, saveJob, saveLinks, updateJob } from './db.js'
 import { scrapeLinks } from './scraper.js'
 
-const jobs: Job[] = await getJobs()
+const isDev = process.env.NODE_ENV === 'development'
 
 export const createJob = async (jobInput: Prisma.JobCreateInput) => {
-  const createdJob = await saveJob(jobInput)
-  jobs.push(createdJob)
+  await saveJob(jobInput)
 }
 
 export const runJob = async (job: Job) => {
@@ -45,7 +44,7 @@ export const runJob = async (job: Job) => {
   }
 }
 
-export const runJobs = async () => {
+export const runJobs = async (jobs: Job[]) => {
   for (const job of jobs) {
     console.log(`Running job ${job.name} from ${job.guildId}`)
     if (!job.active) continue
@@ -56,16 +55,15 @@ export const runJobs = async () => {
 export const runIntervalJobs = async () => {
   let i = 0
   const run = async () => {
+    const jobs: Job[] = await getJobs()
     const jobsToRun = jobs.filter(
       ({ interval, active }) => i % interval === 0 && active
     )
     console.log(`${i}: Running ${jobsToRun.length} jobs`)
-    for (const job of jobsToRun) {
-      await runJob(job)
-    }
+    await runJobs(jobsToRun)
     i++
   }
   run()
-  const intervalId = setInterval(run, 1000 * 60)
+  const intervalId = setInterval(run, 1000 * (isDev ? 10 : 60))
   return intervalId
 }

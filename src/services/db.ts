@@ -85,14 +85,14 @@ export const saveLinks = async (
 
 export const getLinks = async (
   guildId: string,
-  channelId: string
+  jobName: string
 ): Promise<string[]> => {
   return await prisma.link
     .findMany({
       where: {
         job: {
           guildId,
-          channelId,
+          name: jobName,
         },
       },
     })
