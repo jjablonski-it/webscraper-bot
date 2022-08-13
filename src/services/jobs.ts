@@ -60,7 +60,7 @@ export const runIntervalJobs = async () => {
     const jobsToRun = jobs.filter(
       ({ interval, active }) => i % interval === 0 && active
     )
-    console.log(`${i}: Running ${jobsToRun.length} jobs`)
+    console.log(`${jobsToRun.length} jobs in queue`)
     await runJobs(jobsToRun)
     i++
   }
