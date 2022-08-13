@@ -1,23 +1,23 @@
 import { Guild, Job, Prisma, PrismaClient } from '@prisma/client'
 
-const client = new PrismaClient()
+const prisma = new PrismaClient()
 
 export const saveGuild = async (guildId: string): Promise<Guild> => {
-  return await client.guild.create({ data: { id: guildId } })
+  return await prisma.guild.create({ data: { id: guildId } })
 }
 
 export const getGuilds = async (): Promise<Guild[]> => {
-  return await client.guild.findMany()
+  return await prisma.guild.findMany()
 }
 
 export const saveJob = async (job: Prisma.JobCreateInput): Promise<Job> => {
-  return await client.job.create({
+  return await prisma.job.create({
     data: job,
   })
 }
 
 export const getJobs = async (guildId?: string) => {
-  return client.job.findMany({
+  return prisma.job.findMany({
     where: {
       ...(guildId && { guildId }),
     },
@@ -25,7 +25,7 @@ export const getJobs = async (guildId?: string) => {
 }
 
 export const getJob = async (guildId: string, name: string): Promise<Job> => {
-  return await client.job.findUniqueOrThrow({
+  return await prisma.job.findUniqueOrThrow({
     where: {
       name_guildId: {
         guildId,
@@ -40,7 +40,7 @@ export const updateJob = async (
   name: string,
   job: Prisma.JobUpdateInput
 ): Promise<Job> => {
-  return await client.job.update({
+  return await prisma.job.update({
     data: job,
     where: {
       name_guildId: {
@@ -52,7 +52,7 @@ export const updateJob = async (
 }
 
 export const deleteJob = async (guildId: string, name: string) => {
-  return await client.job.delete({
+  return await prisma.job.delete({
     where: {
       name_guildId: {
         guildId,
@@ -67,7 +67,7 @@ export const saveLinks = async (
   jobName: string,
   links: string[]
 ) => {
-  const job = await client.job.findUniqueOrThrow({
+  const job = await prisma.job.findUniqueOrThrow({
     where: {
       name_guildId: {
         name: jobName,
@@ -75,7 +75,7 @@ export const saveLinks = async (
       },
     },
   })
-  return await client.link.createMany({
+  return await prisma.link.createMany({
     data: links.map((link) => ({
       url: link,
       jobId: job.id,
@@ -87,7 +87,7 @@ export const getLinks = async (
   guildId: string,
   channelId: string
 ): Promise<string[]> => {
-  return await client.link
+  return await prisma.link
     .findMany({
       where: {
         job: {
