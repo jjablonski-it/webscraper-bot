@@ -131,7 +131,7 @@ function handleCommands(client: Client<boolean>) {
           await interaction.reply('Missing required options')
           return
         }
-        const job = await getJob(interaction.guild?.id!, name)
+        const job = await getJob(interaction.guild?.id, name)
         await interaction.reply(`Running job ${name}...`)
         runJob(job)
       }
