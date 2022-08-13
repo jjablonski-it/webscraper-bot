@@ -6,7 +6,7 @@ import {
   getJob,
   getJobs,
   saveGuild,
-  updateJob,
+  updateJob
 } from '../services/db.js'
 import { createJob, runJob } from '../services/jobs.js'
 import { errorMessage, jobActionMessage } from '../services/message.js'
@@ -207,6 +207,17 @@ function handleCommands(client: Client<boolean>) {
           jobActionMessage({ jobName: name, action: 'running' })
         )
         runJob(job)
+      }
+
+      if (interaction.commandName === 'stats') {
+        const jobs = await getJobs(guildId, true)
+        const data = jobs.map(({ name, links }) => ({
+          name,
+          links: links.length,
+        }))
+        await interaction.reply(
+          data.map(({ name, links }) => `**${name}**: ${links}`).join('\n')
+        )
       }
     } catch (e) {
       console.error('Error while handling interaction', interaction, e)

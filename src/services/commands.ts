@@ -120,6 +120,9 @@ const getCommands = (jobs: Job[]) => [
         .setName('channel')
         .setDescription('The channel to send the links to')
     ),
+    new SlashCommandBuilder()
+    .setName('stats')
+    .setDescription('Shows some stats about the bot'),
 ]
 
 export const registerCommands = async (clientId: string, guildId: string) => {

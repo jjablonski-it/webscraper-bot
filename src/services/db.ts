@@ -16,15 +16,24 @@ export const saveJob = async (job: Prisma.JobCreateInput): Promise<Job> => {
   })
 }
 
-export const getJobs = async (guildId?: string) => {
+export const getJobs = async <T extends boolean>(
+  guildId?: string,
+  withLinks?: T
+): Promise<
+  T extends false ? Job[] : Prisma.JobGetPayload<{ include: { links: true } }>[]
+> => {
   return prisma.job.findMany({
     where: {
       ...(guildId && { guildId }),
     },
+    ...((withLinks ?? true) && { include: { links: true } }),
   })
 }
 
-export const getJob = async (guildId: string, name: string): Promise<Job | null> => {
+export const getJob = async (
+  guildId: string,
+  name: string
+): Promise<Job | null> => {
   return await prisma.job.findUnique({
     where: {
       name_guildId: {
