@@ -1,8 +1,8 @@
 import { Job, Prisma } from '@prisma/client'
 import { ProtocolError } from 'puppeteer'
-import { sendMessage } from '../controllers/discord'
-import { getLinks, getJobs, saveJob, saveLinks, updateJob } from './db'
-import { scrapeLinks } from './scraper'
+import { sendMessage } from '../controllers/discord.js'
+import { getLinks, getJobs, saveJob, saveLinks, updateJob } from './db.js'
+import { scrapeLinks } from './scraper.js'
 
 const jobs: Job[] = await getJobs()
 

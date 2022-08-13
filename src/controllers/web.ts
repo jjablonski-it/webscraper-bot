@@ -1,5 +1,5 @@
 import { createServer } from 'http'
-import { CONFIG } from '../config'
+import { CONFIG } from '../config.js'
 
 const server = createServer((_req, res) => {
   res.write('OK')
