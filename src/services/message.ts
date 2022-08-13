@@ -1,8 +1,10 @@
-
 interface JobBaseMessage {
   jobName: string
   ok?: boolean
 }
+
+export const errorMessage = (message: string) => `❌ ${message}`
+
 const jobBaseMessage = ({ jobName, ok = true }: JobBaseMessage) =>
   `${ok ? '✅' : '❌'} job **${jobName}**`
 
@@ -17,6 +19,7 @@ export const jobOutputMessage = ({
 
 export const jobActionMessage = ({
   action,
+  postfix,
   ...baseProps
-}: JobBaseMessage & { action: string }) =>
-  `${jobBaseMessage(baseProps)} \`${action}\``
+}: JobBaseMessage & { action: string; postfix?: string }) =>
+  `${jobBaseMessage(baseProps)} \`${action}\`${postfix}`

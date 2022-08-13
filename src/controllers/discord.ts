@@ -9,7 +9,7 @@ import {
   updateJob,
 } from '../services/db.js'
 import { createJob, runJob } from '../services/jobs.js'
-import { jobActionMessage } from '../services/message.js'
+import { errorMessage, jobActionMessage } from '../services/message.js'
 
 let client: Client<boolean>
 
@@ -39,7 +39,7 @@ function handleCommands(client: Client<boolean>) {
       if (!interaction.isChatInputCommand()) return
       const guildId = interaction.guild?.id
       if (!guildId) {
-        await interaction.reply('Guild not found')
+        await interaction.reply(errorMessage('Guild not found'))
         return
       }
 
@@ -56,12 +56,16 @@ function handleCommands(client: Client<boolean>) {
           interaction.options.getChannel('channel') || interaction.channel
 
         if (!name || !url || !selector || (!interval && interval !== 0)) {
-          await interaction.reply('Missing required options')
+          await interaction.reply(errorMessage('Missing required options'))
           return
         }
         if (channel?.type !== ChannelType.GuildText) {
-          await interaction.reply('Channel must be a text channel')
+          await interaction.reply(errorMessage('Channel must be a text channel'))
           return
+        }
+        const nameExists = await getJob(guildId, name)
+        if (nameExists) {
+          await interaction.reply(errorMessage('Job with that name already exists'))
         }
 
         await createJob({
@@ -80,7 +84,8 @@ function handleCommands(client: Client<boolean>) {
         await interaction.reply(
           jobActionMessage({
             jobName: name,
-            action: `created in ${channel?.toString()}`,
+            action: 'created in ',
+            postfix: channel?.toString(),
           })
         )
         registerCommands(CONFIG.CLIENT_ID, guildId)
@@ -89,7 +94,7 @@ function handleCommands(client: Client<boolean>) {
       if (interaction.commandName === 'delete-job') {
         const name = interaction.options.getString('name')
         if (!name) {
-          await interaction.reply('Missing required options')
+          await interaction.reply(errorMessage('Missing required options'))
           return
         }
         await deleteJob(guildId, name)
@@ -102,7 +107,7 @@ function handleCommands(client: Client<boolean>) {
       if (interaction.commandName === 'disable-job') {
         const name = interaction.options.getString('name')
         if (!name) {
-          await interaction.reply('Missing required options')
+          await interaction.reply(errorMessage('Missing required options'))
           return
         }
         await updateJob(guildId, name, { active: false })
@@ -115,7 +120,7 @@ function handleCommands(client: Client<boolean>) {
       if (interaction.commandName === 'enable-job') {
         const name = interaction.options.getString('name')
         if (!name) {
-          await interaction.reply('Missing required options')
+          await interaction.reply(errorMessage('Missing required options'))
           return
         }
         await updateJob(guildId, name, { active: true })
@@ -140,10 +145,14 @@ function handleCommands(client: Client<boolean>) {
       if (interaction.commandName === 'run-job') {
         const name = interaction.options.getString('name')
         if (!name) {
-          await interaction.reply('Missing required options')
+          await interaction.reply(errorMessage('Missing required options'))
           return
         }
         const job = await getJob(interaction.guild?.id, name)
+        if (!job) {
+          await interaction.reply(errorMessage('Job not found'))
+          return
+        }
         await interaction.reply(
           jobActionMessage({ jobName: name, action: 'running' })
         )

@@ -24,8 +24,8 @@ export const getJobs = async (guildId?: string) => {
   })
 }
 
-export const getJob = async (guildId: string, name: string): Promise<Job> => {
-  return await prisma.job.findUniqueOrThrow({
+export const getJob = async (guildId: string, name: string): Promise<Job | null> => {
+  return await prisma.job.findUnique({
     where: {
       name_guildId: {
         guildId,
