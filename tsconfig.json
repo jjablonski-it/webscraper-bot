@@ -7,7 +7,6 @@
     "lib": ["ES2022"],
     "module": "ES2022",
     "moduleResolution": "node",
-    "noEmit": true,
     "noUncheckedIndexedAccess": true,
     "outDir": "dist",
     "skipLibCheck": true,
