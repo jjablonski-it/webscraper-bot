@@ -220,7 +220,14 @@ function handleCommands(client: Client<boolean>) {
         )
       }
     } catch (e) {
-      console.error('Error while handling interaction', interaction, e)
+      console.error(
+        `Error while handling interaction ${
+          interaction.isChatInputCommand()
+            ? interaction.commandName
+            : interaction
+        }`,
+        e
+      )
       if (interaction.isChatInputCommand())
         await interaction.reply(
           errorMessage('Error while handling interaction')
