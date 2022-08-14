@@ -6,7 +6,7 @@ import {
   getJob,
   getJobs,
   saveGuild,
-  updateJob
+  updateJob,
 } from '../services/db.js'
 import { createJob, runJob } from '../services/jobs.js'
 import { errorMessage, jobActionMessage } from '../services/message.js'
@@ -181,7 +181,7 @@ function handleCommands(client: Client<boolean>) {
       }
 
       if (interaction.commandName === 'list-jobs') {
-        const jobs = await getJobs()
+        const jobs = await getJobs(guildId)
         await interaction.reply(
           `${jobs.length} job${jobs.length > 1 ? 's' : ''} found: \n${jobs
             .map(
@@ -198,7 +198,7 @@ function handleCommands(client: Client<boolean>) {
           await interaction.reply(errorMessage('Missing required options'))
           return
         }
-        const job = await getJob(interaction.guild?.id, name)
+        const job = await getJob(guildId, name)
         if (!job) {
           await interaction.reply(errorMessage('Job not found'))
           return
