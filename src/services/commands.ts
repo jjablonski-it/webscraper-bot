@@ -50,9 +50,21 @@ const getCommands = (jobs: Job[]) => [
     .addIntegerOption((option) =>
       option
         .setName('interval')
-        .setDescription('The interval to scrape in minutes. 0 for manual')
+        .setDescription('The interval to scrape in minutes')
         .setMinValue(0)
         .setMaxValue(1_440)
+        .addChoices(
+          ...[
+            { name: '1 minute', value: 1 },
+            { name: '5 minutes', value: 5 },
+            { name: '10 minutes', value: 10 },
+            { name: '30 minutes', value: 30 },
+            { name: '1 hour', value: 60 },
+            { name: '6 hours', value: 360 },
+            { name: '12 hours', value: 720 },
+            { name: '1 day', value: 1_440 },
+          ]
+        )
         .setRequired(true)
     )
     .addBooleanOption((option) =>
@@ -107,6 +119,18 @@ const getCommands = (jobs: Job[]) => [
         .setDescription('The interval to scrape in minutes. 0 for manual')
         .setMinValue(0)
         .setMaxValue(1_440)
+        .addChoices(
+          ...[
+            { name: '1 minute', value: 1 },
+            { name: '5 minutes', value: 5 },
+            { name: '10 minutes', value: 10 },
+            { name: '30 minutes', value: 30 },
+            { name: '1 hour', value: 60 },
+            { name: '6 hours', value: 360 },
+            { name: '12 hours', value: 720 },
+            { name: '1 day', value: 1_440 },
+          ]
+        )
         .setRequired(false)
     )
     .addBooleanOption((option) =>
@@ -120,7 +144,7 @@ const getCommands = (jobs: Job[]) => [
         .setName('channel')
         .setDescription('The channel to send the links to')
     ),
-    new SlashCommandBuilder()
+  new SlashCommandBuilder()
     .setName('stats')
     .setDescription('Shows some stats about the bot'),
 ]
