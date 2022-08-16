@@ -1,6 +1,6 @@
 import { ChannelType, Client, GatewayIntentBits, TextChannel } from 'discord.js'
 import { CONFIG } from '../config.js'
-import { registerCommands } from '../services/commands.js'
+import { registerCommands } from '../utils/commands.js'
 import {
   deleteJob,
   getJob,

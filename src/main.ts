@@ -1,7 +1,7 @@
 import { CONFIG } from './config.js'
 import { getClient } from './controllers/discord.js'
 import { runWebServer } from './controllers/web.js'
-import { registerCommands } from './services/commands.js'
+import { registerCommands } from './utils/commands.js'
 import { getGuilds, saveGuild } from './services/db.js'
 import { runIntervalJobs } from './services/jobs.js'
 

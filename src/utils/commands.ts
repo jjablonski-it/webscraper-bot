@@ -6,7 +6,7 @@ import {
   SlashCommandStringOption,
 } from 'discord.js'
 import { CONFIG } from '../config.js'
-import { getJobs } from './db.js'
+import { getJobs } from '../services/db.js'
 
 // type CommandName =
 //   | 'ping'
