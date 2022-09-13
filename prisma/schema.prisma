@@ -20,18 +20,19 @@ model Guild {
 }
 
 model Job {
-  id        String   @id @default(cuid())
-  name      String
-  url       String
-  selector  String
-  interval  Int
-  channelId String
-  active    Boolean
-  guildId   String
-  Guild     Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
-  links     Link[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  name       String
+  url        String
+  selector   String
+  interval   Int
+  channelId  String
+  active     Boolean
+  cleanQuery Boolean
+  guildId    String
+  Guild      Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  links      Link[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@unique([name, guildId])
   @@map(name: "jobs")

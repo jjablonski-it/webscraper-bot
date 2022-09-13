@@ -1,6 +1,7 @@
 import { Job, Prisma } from '@prisma/client'
 import { ProtocolError } from 'puppeteer'
 import { sendMessage } from '../controllers/discord.js'
+import { cleanQueryParams } from '../utils/cleanQueryParams.js'
 import { getJobs, getLinks, saveJob, saveLinks, updateJob } from './db.js'
 import { jobOutputMessage } from './message.js'
 import { scrapeLinks } from './scraper.js'
@@ -18,10 +19,10 @@ export const runJob = async (job: Job) => {
   try {
     const links = await scrapeLinks(url, selector)
     const existingLinks = await getLinks(guildId, channelId)
-    const newLinks = [
+    const newLinksRaw = [
       ...new Set(links.filter((link) => !existingLinks.includes(link))),
     ]
-
+    const newLinks = job.cleanQuery ? newLinksRaw.map(cleanQueryParams) : newLinksRaw
     if (newLinks.length) {
       await saveLinks(guildId, name, newLinks)
       const message = jobOutputMessage({

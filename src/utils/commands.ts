@@ -73,6 +73,12 @@ const getCommands = (jobs: Job[]) => [
         .setDescription('Whether the job is active')
         .setRequired(false)
     )
+    .addBooleanOption((option) =>
+      option
+        .setName('cleanQuery')
+        .setDescription('Whether the query params should be removed from the url')
+        .setRequired(false)
+    )
     .addChannelOption((option) =>
       option
         .setName('channel')
@@ -131,6 +137,12 @@ const getCommands = (jobs: Job[]) => [
             { name: '1 day', value: 1_440 },
           ]
         )
+        .setRequired(false)
+    )
+    .addBooleanOption((option) =>
+      option
+        .setName('cleanQuery')
+        .setDescription('Whether the query params should be removed from the url')
         .setRequired(false)
     )
     .addBooleanOption((option) =>
