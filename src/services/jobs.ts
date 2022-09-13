@@ -17,12 +17,13 @@ export const runJob = async (job: Job) => {
   console.log(`Running job ${name} for guild ${guildId}`)
 
   try {
-    const links = await scrapeLinks(url, selector)
+    const shouldClean= job.clean
+    const linksRaw = await scrapeLinks(url, selector)
+    const links = shouldClean ? linksRaw.map(cleanQueryParams) : linksRaw
     const existingLinks = await getLinks(guildId, channelId)
-    const newLinksRaw = [
+    const newLinks = [
       ...new Set(links.filter((link) => !existingLinks.includes(link))),
     ]
-    const newLinks = job.clean ? newLinksRaw.map(cleanQueryParams) : newLinksRaw
     if (newLinks.length) {
       await saveLinks(guildId, name, newLinks)
       const message = jobOutputMessage({
