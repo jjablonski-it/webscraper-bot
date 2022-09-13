@@ -22,7 +22,7 @@ export const runJob = async (job: Job) => {
     const newLinksRaw = [
       ...new Set(links.filter((link) => !existingLinks.includes(link))),
     ]
-    const newLinks = job.cleanQuery ? newLinksRaw.map(cleanQueryParams) : newLinksRaw
+    const newLinks = job.clean ? newLinksRaw.map(cleanQueryParams) : newLinksRaw
     if (newLinks.length) {
       await saveLinks(guildId, name, newLinks)
       const message = jobOutputMessage({

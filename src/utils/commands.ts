@@ -75,7 +75,7 @@ const getCommands = (jobs: Job[]) => [
     )
     .addBooleanOption((option) =>
       option
-        .setName('cleanQuery')
+        .setName('clean')
         .setDescription('Whether the query params should be removed from the url')
         .setRequired(false)
     )
@@ -141,7 +141,7 @@ const getCommands = (jobs: Job[]) => [
     )
     .addBooleanOption((option) =>
       option
-        .setName('cleanQuery')
+        .setName('clean')
         .setDescription('Whether the query params should be removed from the url')
         .setRequired(false)
     )

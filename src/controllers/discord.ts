@@ -53,7 +53,7 @@ function handleCommands(client: Client<boolean>) {
         const selector = interaction.options.getString('selector')
         const interval = interaction.options.getInteger('interval')
         const active = interaction.options.getBoolean('active') ?? true
-        const cleanQuery = interaction.options.getBoolean('cleanQuery') ?? true
+        const clean = interaction.options.getBoolean('clean') ?? true
         const channel =
           interaction.options.getChannel('channel') || interaction.channel
 
@@ -80,7 +80,7 @@ function handleCommands(client: Client<boolean>) {
           selector,
           interval,
           active,
-          cleanQuery,
+          clean,
           channelId: channel.id,
           Guild: {
             connect: {
