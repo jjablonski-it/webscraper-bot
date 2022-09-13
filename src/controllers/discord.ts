@@ -187,8 +187,8 @@ function handleCommands(client: Client<boolean>) {
         await interaction.reply(
           `${jobs.length} job${jobs.length > 1 ? 's' : ''} found: \n${jobs
             .map(
-              ({ name, url, selector, interval, active }) =>
-                `**${name}** \n url: ${url} \n selector: \`${selector}\` \n interval: \`${interval}\` \n active: \`${active}\``
+              ({ name, url, selector, interval, active, clean }) =>
+                `**${name}** \n url: ${url} \n selector: \`${selector}\` \n interval: \`${interval}\` \n active: \`${active}\ \n clean: \`${clean}\``
             )
             .join('\n\n')}`
         )
