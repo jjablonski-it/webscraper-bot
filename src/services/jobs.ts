@@ -1,5 +1,4 @@
 import { Job, Prisma } from '@prisma/client'
-import { ProtocolError } from 'puppeteer'
 import { sendMessage } from '../controllers/discord.js'
 import { cleanQueryParams } from '../utils/cleanQueryParams.js'
 import { getJobs, getLinks, saveJob, saveLinks, updateJob } from './db.js'
@@ -17,13 +16,11 @@ export const runJob = async (job: Job) => {
   console.log(`Running job ${name} for guild ${guildId}`)
 
   try {
-    const shouldClean= job.clean
+    const shouldClean = job.clean
     const linksRaw = await scrapeLinks(url, selector)
     const links = shouldClean ? linksRaw.map(cleanQueryParams) : linksRaw
     const existingLinks = await getLinks(guildId, channelId)
-    const newLinks = [
-      ...new Set(links.filter((link) => !existingLinks.includes(link))),
-    ]
+    const newLinks = [...new Set(links.filter((link) => !existingLinks.includes(link)))]
     if (newLinks.length) {
       await saveLinks(guildId, name, newLinks)
       const message = jobOutputMessage({
@@ -31,20 +28,19 @@ export const runJob = async (job: Job) => {
         message: `Found ${newLinks.length} new links\n${newLinks.join('\n')}`,
       })
       await sendMessage(channelId, message)
+      await updateJob(guildId, name, { failuresInARow: 0 })
     }
   } catch (e) {
     console.error(`Error running job ${name} from ${guildId}`, e)
-    if (e instanceof ProtocolError) {
-      const message = jobOutputMessage({
-        jobName: name,
-        ok: false,
-        message: `Error: ${e.originalMessage}${
-          job.active ? '\nDisabling job...' : ''
-        }`,
-      })
-      await sendMessage(channelId, message)
-      if (job.active) updateJob(guildId, name, { active: false })
+    const failuresInARow = job.failuresInARow + 1
+    if (failuresInARow >= 3) {
+      await updateJob(guildId, name, { active: false })
+      await sendMessage(
+        channelId,
+        jobOutputMessage({ jobName: name, message: 'Job disabled due to too many failures in a row' })
+      )
     }
+    await updateJob(guildId, name, { failuresInARow })
   }
 }
 
@@ -59,9 +55,7 @@ export const runIntervalJobs = async () => {
   let i = 0
   const run = async () => {
     const jobs: Job[] = await getJobs()
-    const jobsToRun = jobs.filter(
-      ({ interval, active }) => i % interval === 0 && active
-    )
+    const jobsToRun = jobs.filter(({ interval, active }) => i % interval === 0 && active)
     console.log(`${jobsToRun.length} jobs in queue`)
     await runJobs(jobsToRun)
     i++
