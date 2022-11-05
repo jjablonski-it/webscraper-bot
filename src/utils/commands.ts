@@ -12,6 +12,18 @@ import { getJobs } from '../services/db.js'
 //   | 'run-job'
 //   | 'list-jobs'
 
+const intervalOptions = [
+  { name: '5 minutes', value: 5 },
+  { name: '10 minutes', value: 10 },
+  { name: '15 minutes', value: 15 },
+  { name: '30 minutes', value: 30 },
+  { name: '1 hour', value: 60 },
+  { name: '2 hours', value: 120 },
+  { name: '6 hours', value: 360 },
+  { name: '12 hours', value: 720 },
+  { name: '1 day', value: 1_440 },
+]
+
 const existingJobOption = (jobs: Job[]) => (option: SlashCommandStringOption) =>
   option
     .setName('name')
@@ -38,19 +50,7 @@ const getCommands = (jobs: Job[]) => [
         .setDescription('The interval to scrape in minutes')
         .setMinValue(0)
         .setMaxValue(1_440)
-        .addChoices(
-          ...[
-            { name: '5 minutes', value: 5 },
-            { name: '10 minutes', value: 10 },
-            { name: '15 minutes', value: 15 },
-            { name: '30 minutes', value: 30 },
-            { name: '1 hour', value: 60 },
-            { name: '2 hours', value: 120 },
-            { name: '6 hours', value: 360 },
-            { name: '12 hours', value: 720 },
-            { name: '1 day', value: 1_440 },
-          ]
-        )
+        .addChoices(...intervalOptions)
         .setRequired(true)
     )
     .addBooleanOption((option) =>
@@ -94,18 +94,7 @@ const getCommands = (jobs: Job[]) => [
         .setDescription('The interval to scrape in minutes. 0 for manual')
         .setMinValue(0)
         .setMaxValue(1_440)
-        .addChoices(
-          ...[
-            { name: '1 minute', value: 1 },
-            { name: '5 minutes', value: 5 },
-            { name: '10 minutes', value: 10 },
-            { name: '30 minutes', value: 30 },
-            { name: '1 hour', value: 60 },
-            { name: '6 hours', value: 360 },
-            { name: '12 hours', value: 720 },
-            { name: '1 day', value: 1_440 },
-          ]
-        )
+        .addChoices(...intervalOptions)
         .setRequired(false)
     )
     .addBooleanOption((option) =>
