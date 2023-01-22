@@ -155,7 +155,7 @@ function handleCommands(client: Client<boolean>) {
           await interaction.reply(errorMessage('Missing required options'))
           return
         }
-        await updateJob(guildId, name, { active: true })
+        await updateJob(guildId, name, { active: true, failuresInARow: 0 })
         await interaction.reply(jobActionMessage({ jobName: name, action: 'enabled' }))
         registerCommands(CONFIG.CLIENT_ID, guildId)
       }

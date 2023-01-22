@@ -1,6 +1,8 @@
 import { Job, Prisma } from '@prisma/client'
+import { CONFIG } from '../config.js'
 import { sendMessage } from '../controllers/discord.js'
 import { cleanQueryParams } from '../utils/cleanQueryParams.js'
+import { registerCommands } from '../utils/commands.js'
 import { getJobs, getLinks, saveJob, saveLinks, updateJob } from './db.js'
 import { jobOutputMessage } from './message.js'
 import { scrapeLinks } from './scraper.js'
@@ -28,17 +30,20 @@ export const runJob = async (job: Job) => {
         message: `Found ${newLinks.length} new links\n${newLinks.join('\n')}`,
       })
       await sendMessage(channelId, message)
-      await updateJob(guildId, name, { failuresInARow: 0 })
+      if (job.failuresInARow > 0) {
+        await updateJob(guildId, name, { failuresInARow: 0 })
+      }
     }
   } catch (e) {
     console.error(`Error running job ${name} from ${guildId}`, e)
     const failuresInARow = job.failuresInARow + 1
-    if (failuresInARow >= 3) {
+    if (failuresInARow >= 10) {
       await updateJob(guildId, name, { active: false })
       await sendMessage(
         channelId,
         jobOutputMessage({ jobName: name, message: 'Job disabled due to too many failures in a row' })
       )
+      registerCommands(CONFIG.CLIENT_ID, guildId)
     }
     await updateJob(guildId, name, { failuresInARow })
   }
