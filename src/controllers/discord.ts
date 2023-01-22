@@ -209,5 +209,36 @@ export const sendMessage = async (channelId: string, message: string) => {
   console.log(`Sending message to ${channelId}`)
   const channel = client.channels.cache.get(channelId) as TextChannel
   if (!channel.isTextBased()) throw new Error(`Channel ${channelId} is not a text channel`)
-  return await channel?.send(message.substring(0, 2000))
+
+  // Handle discord 2000 char limit
+  const messages = splitMessage(message)
+  for (const message of messages) {
+    await channel.send(message)
+  }
+}
+
+const splitMessage = (message: string): string[] => {
+  return message.split('\n').reduce(
+    (acc, line) => {
+      const { chunks, currentChunk, currentChunkLength } = acc
+      if (line.length > 10) line = line.substring(0, 2000)
+      if (currentChunkLength + line.length > 2000) {
+        return {
+          chunks: [...chunks, currentChunk],
+          currentChunk: line,
+          currentChunkLength: line.length,
+        }
+      }
+      return {
+        chunks,
+        currentChunk: [currentChunk, line].join('\n'),
+        currentChunkLength: currentChunkLength + line.length,
+      }
+    },
+    {
+      chunks: [] as string[],
+      currentChunk: '',
+      currentChunkLength: 0,
+    }
+  ).chunks
 }
