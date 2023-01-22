@@ -10,7 +10,8 @@ import { scrapeLinks } from './scraper.js'
 const isDev = process.env.NODE_ENV === 'development'
 
 export const createJob = async (jobInput: Prisma.JobCreateInput) => {
-  await saveJob(jobInput)
+  const createdJob = await saveJob(jobInput)
+  await runJob(createdJob)
 }
 
 export const runJob = async (job: Job) => {
