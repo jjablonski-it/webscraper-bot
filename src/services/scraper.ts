@@ -11,8 +11,16 @@ export const scrapeLinks = async (url: string, selector: string): Promise<Array<
   await page.goto(url)
   await page.waitForSelector(selector, { timeout: 5000 })
   const links = await page.$$(selector)
-  const res = await Promise.all(links.map((handle) => handle.getProperty('href')))
-  const hrefs = (await Promise.all(res.map((href) => href.jsonValue()))) as string[]
+  const hrefs = (
+    await Promise.allSettled(
+      links.map(async (link) => {
+        const href = await link.getProperty('href')
+        return href.jsonValue()
+      })
+    )
+  )
+    .filter((result): result is PromiseFulfilledResult<unknown> => result.status === 'fulfilled')
+    .map(({ value }) => value as string)
   await page.close()
   return hrefs
 }
