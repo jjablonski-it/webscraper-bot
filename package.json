@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/main.js",
-    "dev": "NODE_ENV=development nodemon dist/main.js"
+    "dev": "NODE_ENV=development concurrently \"nodemon dist/main.js\" \"tsc -w\""
   },
   "author": "Jakub Jablonski",
   "license": "ISC",
@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.6.5",
+    "concurrently": "^7.6.0",
     "nodemon": "^2.0.19",
     "typescript": "^4.7.4"
   },
