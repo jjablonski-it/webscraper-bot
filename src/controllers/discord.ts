@@ -24,6 +24,7 @@ function handleEvents(client: Client<boolean>) {
   client.on('guildCreate', async (guild) => {
     console.log(`Joined guild ${guild.name}`)
     await saveGuild(guild.id)
+    registerCommands(CONFIG.CLIENT_ID, guild.id)
   })
 }
 
