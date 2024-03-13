@@ -1,3 +1,4 @@
+[![Dependency review](https://github.com/sol-fitzy/webscraper-bot/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/sol-fitzy/webscraper-bot/actions/workflows/dependency-review.yml)
 # webscraper-bot
 
 Discord web scraping bot used to scrape websites with dynamic content and send notifications when there is a new item.
