@@ -2,12 +2,13 @@
 
 Discord web scraping bot used to scrape websites with dynamic content and send notifications when there is a new item.
 
+> 📣 There's a new version of this bot, find more about it here: https://discord.gg/9PU7GAUfBV
+
 ## Instructions
 
 #### 1.Adding bot to your server
 
-Simply click the link:
-https://discord.com/api/oauth2/authorize?client_id=1007981622005596171&permissions=2147485696&scope=bot%20applications.commands
+This version development has been paused but you can try out [the new version](https://discord.gg/9PU7GAUfBV) or self host it (e.g. using Render or Railway),
 
 #### 2.Adding new scraper job
 
