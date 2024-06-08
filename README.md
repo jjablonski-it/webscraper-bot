@@ -1,8 +1,10 @@
+>🚨 **There's a new, more advanced version of this bot that you can checkout for free** 🚨
+>
+>Try it out https://discord.gg/9PU7GAUfBV. For more information visit https://notifast.me
+
 # webscraper-bot
 
 Discord web scraping bot used to scrape websites with dynamic content and send notifications when there is a new item.
-
-> 📣 There's a new version of this bot, find more about it here: https://discord.gg/9PU7GAUfBV
 
 ## Instructions
 
