@@ -1,6 +1,5 @@
 >🚨 **There's a new, more advanced version of this bot that you can checkout for free** 🚨
->
->Try it out https://discord.gg/9PU7GAUfBV. For more information visit https://notifast.me
+>Visit [notifast.me](https://notifast.me) to learn more
 
 # webscraper-bot
 
